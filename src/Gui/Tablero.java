@@ -10,12 +10,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import Excepciones.Error;
 import Juego.*;
+import Juego.Menu;
 
 public class Tablero extends JFrame {
     private HashMap<Integer, Casilla> casillas;
     private HashMap<Integer, CasillaGui> casillasGui;
+    private PortadaGui portada;
+    private MenuGui menuGui;
+    private Menu menu;
 
-    public Tablero(HashMap<Integer, Casilla> casillas){
+    public Tablero(HashMap<Integer, Casilla> casillas, Menu menu){
         super("Monopoly");
         this.setSize(1000,1000);
         this.setLocationRelativeTo(null);
@@ -26,8 +30,13 @@ public class Tablero extends JFrame {
 
         this.casillas = casillas;
         this.casillasGui = new HashMap<>();
+        this.menu = menu;
 
         init();
+    }
+
+    public MenuGui getMenuGui() {
+        return menuGui;
     }
 
     public void init(){
@@ -65,7 +74,13 @@ public class Tablero extends JFrame {
         for(CasillaGui c: this.casillasGui.values())
             this.add(c);
 
-        this.add(new MenuGui());
+        this.add((this.portada = new PortadaGui(this)));
 
+    }
+
+    public void empezar(ArrayList<String> jugadores){
+        this.remove(this.portada);
+        this.add((this.menuGui = new MenuGui()));
+        this.menu.crearJugadores(jugadores);
     }
 }

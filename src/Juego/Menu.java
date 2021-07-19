@@ -38,6 +38,7 @@ public class Menu {
                                          para Sorpresa--> sorpresa
                                          para carcel--> visita/no visita
                                          para taxes--> impuesto
+         Crea el tablero
      */
     private void crearCasillas(File casillas) {
         int posicion = -1;
@@ -147,10 +148,14 @@ public class Menu {
                 }
                 this.casillas.put(posicion, c);
             }
-            new Tablero(this.casillas);
+            new Tablero(this.casillas, this);
         } catch (Exception excepcion) {
             excepcion.printStackTrace();
         }
+
+    }
+
+    public void crearJugadores(ArrayList<String> jugadores){
 
     }
 }
