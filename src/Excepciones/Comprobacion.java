@@ -129,9 +129,9 @@ public class Comprobacion {
             }
         }
         if((p.getColor().equals(Color.PINK) || p.getColor().equals(Color.MAGENTA)) && num != 2)
-            throw new ExcepcionCapitalista(Error.noEdificable);
+            throw new ExcepcionCapitalista(Error.todaviaNoEdif);
         else if(!(p.getColor().equals(Color.PINK) || p.getColor().equals(Color.MAGENTA)) && num != 3)
-            throw new ExcepcionCapitalista(Error.noEdificable);
+            throw new ExcepcionCapitalista(Error.todaviaNoEdif);
     }
 
     public static Color color(String col){

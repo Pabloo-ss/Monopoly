@@ -10,6 +10,26 @@ public class CasillaGui extends JPanel {
     private ColorGui colorPanel;
     private JPanel pEti;
 
+    public JLabel getEtiqueta() {
+        return etiqueta;
+    }
+
+    public void setEtiqueta(JLabel etiqueta) {
+        this.etiqueta = etiqueta;
+    }
+
+    public JPanel getpEti() {
+        return pEti;
+    }
+
+    public void setpEti(JPanel pEti) {
+        this.pEti = pEti;
+    }
+
+    public ColorGui getColorPanel() {
+        return colorPanel;
+    }
+
     public CasillaGui(int pos, Orientacion orientacion, String texto, Color color){
         super();
         this.setBackground(Color.GRAY.brighter());
@@ -106,7 +126,5 @@ public class CasillaGui extends JPanel {
         }
     }
 
-    public ColorGui getColorPanel() {
-        return colorPanel;
-    }
+
 }

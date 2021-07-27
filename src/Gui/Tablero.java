@@ -1,5 +1,6 @@
 package Gui;
 
+import Excepciones.Comprobacion;
 import Juego.Calle;
 import Juego.Casilla;
 
@@ -18,6 +19,7 @@ public class Tablero extends JFrame {
     private PortadaGui portada;
     private MenuGui menuGui;
     private Menu menu;
+    private HashMap<String, Ficha> fichas;
 
     public Tablero(HashMap<Integer, Casilla> casillas, Menu menu){
         super("Monopoly");
@@ -25,14 +27,14 @@ public class Tablero extends JFrame {
         this.setLocationRelativeTo(null);
         this.setLayout(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setVisible(true);
-
 
         this.casillas = casillas;
         this.casillasGui = new HashMap<>();
+        this.fichas = new HashMap<>();
         this.menu = menu;
 
         init();
+        this.setVisible(true);
     }
 
     public MenuGui getMenuGui() {
@@ -79,8 +81,29 @@ public class Tablero extends JFrame {
     }
 
     public void empezar(ArrayList<String> jugadores){
-        this.remove(this.portada);
-        this.add((this.menuGui = new MenuGui()));
+        //this.remove(this.portada);
+        this.portada.setVisible(false);
+        this.add((this.menuGui = new MenuGui(this.menu)));
+        this.setSize(1008, 1020);
+
+        ArrayList<Color> colores = new ArrayList<>();
+        colores.add(Color.CYAN); colores.add(Color.YELLOW); colores.add(Color.PINK); colores.add(Color.ORANGE);
+        for (int i = 0; i < jugadores.size(); i++)
+            this.fichas.put(jugadores.get(i), new Ficha(colores.get(i)));
+
+        for (Ficha f: this.fichas.values())
+            this.casillasGui.get(0).getpEti().add(f);
+
         this.menu.crearJugadores(jugadores);
+    }
+
+    public void moverFicha(Turno t){
+        Ficha f = this.fichas.get(t.getJugador().getNombre());
+        CasillaGui c = this.casillasGui.get(f.getPos());
+
+        c.getpEti().remove(c);
+
+        this.casillasGui.get(f.getPos() + t.getTirada() % Error.maxCasillas).getpEti().add(f);
+
     }
 }

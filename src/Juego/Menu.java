@@ -6,28 +6,57 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 import Excepciones.Comprobacion;
+import Gui.MenuGui;
 import Gui.Orientacion;
 import Gui.Tablero;
 import Excepciones.Error;
+import Gui.VAviso;
 
 public class Menu {
-    private ArrayList<Jugador> jugadores = new ArrayList<>();
-    private HashMap<Integer, Casilla> casillas = new HashMap<>();
+    private ArrayList<Jugador> jugadores;
+    private HashMap<Integer, Casilla> casillas;
+    private Tablero tablero;
+    private MenuGui mGui;
+    private Turno turno;
+    private int turn = 0;
+    private boolean next = false;
+    private boolean empezar = false;
 
 
     public Menu(){
+        this.jugadores = new ArrayList<>();
+        this.casillas = new HashMap<>();
+        this.turno = new Turno();
         File casillas = new File("casillas.txt");
-        crearCasillas(casillas);
+        this.crearCasillas(casillas);
+
+
+        while (!empezar)  ;
+
+        this.mGui = this.tablero.getMenuGui();
+        this.turno.setJugador(this.jugadores.get(0));
+        this.turno.tirar();
+
+
+        try {
+            java.util.concurrent.TimeUnit.SECONDS.sleep(1);
+        }catch (Exception e){
+            System.out.println("No deberia llegar aqui");
+        }
+        mGui.actJugador(turno.getJugador());
+        mGui.actTirada(turno.getTirada());
+        tablero.moverFicha(turno);
 
         while(true){
 
+            Consola.imprimir("culo");
+            while(!next); //Mientras no se pase el turno que no empiece otra vuelta
+            next = false;
         }
     }
-
-
-
 
 
     /*
@@ -148,14 +177,105 @@ public class Menu {
                 }
                 this.casillas.put(posicion, c);
             }
-            new Tablero(this.casillas, this);
+            this.tablero = new Tablero(this.casillas, this);
         } catch (Exception excepcion) {
             excepcion.printStackTrace();
         }
 
     }
 
+    /*
+    crea los jugadores y asigna el primer turno en funcion del orden en el que se asignen los jugadores al array
+     */
     public void crearJugadores(ArrayList<String> jugadores){
+        Random ran = new Random();
+        Jugador j = null;
+        int x = 0;
+        ArrayList<Integer> repes = new ArrayList<>();
+        if(jugadores.size() > 0)
+            x = ran.nextInt(jugadores.size());
 
+        for(int i = 0; i < jugadores.size(); i++){
+            while(repes.contains(x))
+                x = ran.nextInt(jugadores.size());
+
+            repes.add(x);
+            j = new Jugador(jugadores.get(x));
+            this.jugadores.add(j);
+
+
+        }
+        empezar = true;
+    }
+
+    /*
+    Se ejecuta al pulsar el bComprar. Transmite la llamada a la propiedad en cuestion
+     */
+    public void comprar(){
+        if(this.casillas.get(turno.getJugador().getPosicion()) instanceof Propiedad){
+            ((Propiedad) this.casillas.get(turno.getJugador().getPosicion())).comprar(turno.getJugador());
+        }else
+            new VAviso(Error.noComprable);
+
+    }
+
+    /*
+    Se ejecuta al pulsar el bEdificar. Transmite la llamada a la propiedad en cuestion
+     */
+    public void edificar(){
+        if(this.casillas.get(turno.getJugador().getPosicion()) instanceof Calle){
+            ((Calle) this.casillas.get(turno.getJugador().getPosicion())).edificar(turno.getJugador());
+        }else
+            new VAviso(Error.noEdificable);
+
+    }
+
+    /*
+    Se ejecuta al pulsar el bHipotecar. Transmite la llamada a la propiedad en cuestion
+     */
+    public void hipotecar(){
+        if(this.casillas.get(turno.getJugador().getPosicion()) instanceof Propiedad){
+            ((Propiedad) this.casillas.get(turno.getJugador().getPosicion())).hipotecar(turno.getJugador());
+        }else
+            new VAviso(Error.noHipotecable);
+
+    }
+
+    /*
+    Se ejecuta al pulsar el bTurno
+     */
+    public void acabarTurno(){
+        if(turno.isOk()) {
+            turn++;
+            this.turno.turnoSig(jugadores.get(turn % jugadores.size()));
+
+            try {
+                java.util.concurrent.TimeUnit.SECONDS.sleep(1);
+            }catch (Exception e){
+                System.out.println("No deberia llegar aqui");
+            }
+
+            turno.tirar();
+            mGui.actJugador(turno.getJugador());
+            mGui.actTirada(turno.getTirada());
+            next = true;
+        }else{
+            new VAviso(Error.moroso);
+            //Intentamos cobrar de nuevo
+            Casilla c = casillas.get(turno.getJugador().getPosicion());
+            if(c instanceof Propiedad) {
+                ((Propiedad) c).cobrar(turno.getJugador(), turno);
+                new VAviso("Cobrada queda la deuda, ya puedes terminar turno");
+            }
+            else if(c instanceof Taxes) {
+                ((Taxes) c).cobrar(turno.getJugador());
+                new VAviso("Cobrada queda la deuda, ya puedes terminar turno");
+            }
+        }
+
+    }
+
+    public Turno getTurno() {
+        return turno;
     }
 }

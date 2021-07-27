@@ -1,12 +1,15 @@
 package Juego;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 public class Turno {
     private Jugador jugador;
     private boolean ok;
     private int tirada;
 
-    public Turno(Jugador jugador){
-        this.jugador = jugador;
+    public Turno(){
+        this.jugador = null;
         this.ok = true;
         this.tirada = 0;
     }
@@ -39,5 +42,10 @@ public class Turno {
         this.jugador = j;
         this.ok = true;
         this.tirada = 0;
+    }
+
+    public void tirar(){
+        Random ran = new Random();
+        this.tirada = ran.nextInt(6) + 1;
     }
 }
