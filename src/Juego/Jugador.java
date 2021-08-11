@@ -11,7 +11,7 @@ public class Jugador {
     private boolean salirCarcel;
     private boolean encarcelado;
     private int posicion;
-    final float dineroInicial = 1000;
+    final float dineroInicial = 300000;
 
     public Jugador(String nombre){
         this.nombre = nombre;

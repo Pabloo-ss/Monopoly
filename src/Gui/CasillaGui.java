@@ -40,7 +40,7 @@ public class CasillaGui extends JPanel {
         //Panel para las fichas
         this.pEti = new JPanel();
         this.pEti.setBackground(Color.GRAY.brighter());
-        this.pEti.setPreferredSize(new Dimension(this.size - 16, this.size - 16));
+        this.pEti.setPreferredSize(new Dimension(this.size - 26, this.size - 26));
 
         switch (orientacion) {
             case abajo:

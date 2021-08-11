@@ -12,7 +12,7 @@ public abstract class Propiedad extends Casilla {
     protected int hipoteca;
     protected boolean hipotecada;
 
-    public Propiedad(String nombre, int precio, int hipoteca){
+    public Propiedad(String nombre, int precio, int hipoteca, Menu menu){
         this.nombre = nombre;
         this.titular = null;
         this.precio = precio;
@@ -50,7 +50,7 @@ public abstract class Propiedad extends Casilla {
 
     public abstract void cobrar(Jugador jugador, Turno turno);
 
-    public void comprar(Jugador jugador){
+    public void comprar(Jugador jugador){ //Tengo q hacer q lo q sale por consola se meta en actMovi (igual meidficando consola para q este enlazada con mgui)
         boolean ok = false;
         if(this.titular == null){
             float saldo = jugador.getDinero();

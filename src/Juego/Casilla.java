@@ -2,6 +2,7 @@ package Juego;
 
 public abstract class Casilla {
     private int posicion;
+    private Menu menu;
 
 
     public int getPosicion(){

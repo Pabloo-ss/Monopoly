@@ -34,6 +34,9 @@ public class Tablero extends JFrame {
         this.menu = menu;
 
         init();
+
+        this.add((this.portada = new PortadaGui(this)));
+
         this.setVisible(true);
     }
 
@@ -76,34 +79,37 @@ public class Tablero extends JFrame {
         for(CasillaGui c: this.casillasGui.values())
             this.add(c);
 
-        this.add((this.portada = new PortadaGui(this)));
+
 
     }
 
     public void empezar(ArrayList<String> jugadores){
-        //this.remove(this.portada);
-        this.portada.setVisible(false);
+        this.remove(this.portada);
         this.add((this.menuGui = new MenuGui(this.menu)));
         this.setSize(1008, 1020);
 
         ArrayList<Color> colores = new ArrayList<>();
         colores.add(Color.CYAN); colores.add(Color.YELLOW); colores.add(Color.PINK); colores.add(Color.ORANGE);
+
+        ArrayList<Jugador> jOrdenados = this.menu.crearJugadores(jugadores);
+
         for (int i = 0; i < jugadores.size(); i++)
-            this.fichas.put(jugadores.get(i), new Ficha(colores.get(i)));
+            this.fichas.put(jOrdenados.get(i).getNombre(), new Ficha(colores.get(i)));
 
         for (Ficha f: this.fichas.values())
             this.casillasGui.get(0).getpEti().add(f);
-
-        this.menu.crearJugadores(jugadores);
     }
 
     public void moverFicha(Turno t){
         Ficha f = this.fichas.get(t.getJugador().getNombre());
         CasillaGui c = this.casillasGui.get(f.getPos());
+        f.setPos(t.getJugador().getPosicion());
 
-        c.getpEti().remove(c);
+        c.getpEti().remove(f);
+        c.getpEti().repaint();
 
-        this.casillasGui.get(f.getPos() + t.getTirada() % Error.maxCasillas).getpEti().add(f);
+        this.casillasGui.get(f.getPos()).getpEti().add(f);
+        this.casillasGui.get(f.getPos()).getpEti().repaint();
 
     }
 }

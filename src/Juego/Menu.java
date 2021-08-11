@@ -32,30 +32,10 @@ public class Menu {
         this.turno = new Turno();
         File casillas = new File("casillas.txt");
         this.crearCasillas(casillas);
+        this.tablero = new Tablero(this.casillas, this);
 
 
-        while (!empezar)  ;
 
-        this.mGui = this.tablero.getMenuGui();
-        this.turno.setJugador(this.jugadores.get(0));
-        this.turno.tirar();
-
-
-        try {
-            java.util.concurrent.TimeUnit.SECONDS.sleep(1);
-        }catch (Exception e){
-            System.out.println("No deberia llegar aqui");
-        }
-        mGui.actJugador(turno.getJugador());
-        mGui.actTirada(turno.getTirada());
-        tablero.moverFicha(turno);
-
-        while(true){
-
-            Consola.imprimir("culo");
-            while(!next); //Mientras no se pase el turno que no empiece otra vuelta
-            next = false;
-        }
     }
 
 
@@ -177,7 +157,6 @@ public class Menu {
                 }
                 this.casillas.put(posicion, c);
             }
-            this.tablero = new Tablero(this.casillas, this);
         } catch (Exception excepcion) {
             excepcion.printStackTrace();
         }
@@ -187,7 +166,7 @@ public class Menu {
     /*
     crea los jugadores y asigna el primer turno en funcion del orden en el que se asignen los jugadores al array
      */
-    public void crearJugadores(ArrayList<String> jugadores){
+    public ArrayList<Jugador> crearJugadores(ArrayList<String> jugadores){
         Random ran = new Random();
         Jugador j = null;
         int x = 0;
@@ -205,7 +184,11 @@ public class Menu {
 
 
         }
-        empezar = true;
+        turno.setJugador(this.jugadores.get(0));
+
+        this.mGui = tablero.getMenuGui();
+
+        return this.jugadores;
     }
 
     /*
@@ -256,9 +239,15 @@ public class Menu {
             }
 
             turno.tirar();
+
             mGui.actJugador(turno.getJugador());
             mGui.actTirada(turno.getTirada());
-            next = true;
+
+            turno.getJugador().setPosicion((turno.getJugador().getPosicion() + turno.getTirada()) % Error.maxCasillas);
+
+            tablero.moverFicha(turno);
+
+            mGui.actInfo(casillas.get(turno.getJugador().getPosicion()));
         }else{
             new VAviso(Error.moroso);
             //Intentamos cobrar de nuevo

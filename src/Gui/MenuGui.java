@@ -36,19 +36,19 @@ public class MenuGui extends JPanel {
         this.info.setEditable(false);
         this.jugador = new JTextField();
         this.jugador.setEditable(false);
-        this.jugador.setPreferredSize(new Dimension(55, 25));
+        this.jugador.setPreferredSize(new Dimension(85, 25));
         this.propiedades = new JTable();
         this.propiedades.setModel(new Gui.TablaProp());
         this.dinero = new JTextField();
         this.dinero.setEditable(false);
-        this.dinero.setPreferredSize(new Dimension(35, 25));
+        this.dinero.setPreferredSize(new Dimension(55, 25));
         this.movimientos = new JTextArea();
         this.movimientos.setEditable(false);
         this.tirada = new JTextField();
         this.tirada.setEditable(false);
         this.tirada.setPreferredSize(new Dimension(30, 25));
         this.in = new JTextField();
-        this.in.setPreferredSize(new Dimension(55, 25));
+        this.in.setPreferredSize(new Dimension(75, 25));
         this.in.addActionListener(new ActionListener(){
 
             public void actionPerformed(ActionEvent e){
@@ -69,7 +69,7 @@ public class MenuGui extends JPanel {
                 menu.edificar();
             }
         });
-        this.bTurno = new JButton("Acabar");
+        this.bTurno = new JButton("Turno");
         this.bTurno.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -125,6 +125,26 @@ public class MenuGui extends JPanel {
 
     public void actTirada(int num){
         this.tirada.setText(Integer.toString(num));
+    }
+
+    public void actInfo(Casilla c){
+        if (c instanceof Calle)
+            actInfo((Calle) c);
+        else if (c instanceof Estacion)
+            actInfo((Estacion) c);
+        else if (c instanceof Servicio)
+            actInfo((Servicio) c);
+        else if (c instanceof Salida)
+            actInfo((Salida) c);
+        else if (c instanceof Carcel)
+            actInfo((Carcel) c);
+        else if (c instanceof Taxes)
+            actInfo((Taxes) c);
+        else if (c instanceof Parking)
+            actInfo((Parking) c);
+        else if (c instanceof Sorpresa)
+            ;
+
     }
 
     public void actInfo(Calle c){
