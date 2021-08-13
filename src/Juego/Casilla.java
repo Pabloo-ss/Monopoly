@@ -1,8 +1,10 @@
 package Juego;
 
+import Gui.Interfaz;
+
 public abstract class Casilla {
     private int posicion;
-    private Menu menu;
+    protected Interfaz inter;
 
 
     public int getPosicion(){
@@ -11,6 +13,14 @@ public abstract class Casilla {
 
     public void setPosicion(int pos){
         posicion = pos;
+    }
+
+    public Interfaz getInter() {
+        return inter;
+    }
+
+    public void setInter(Interfaz inter) {
+        this.inter = inter;
     }
 
     public void describir(){

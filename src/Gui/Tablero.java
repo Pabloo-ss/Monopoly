@@ -112,4 +112,26 @@ public class Tablero extends JFrame {
         this.casillasGui.get(f.getPos()).getpEti().repaint();
 
     }
+
+    public void moverFichaCarcel(Turno t){
+        Ficha f = this.fichas.get(t.getJugador().getNombre());
+        CasillaGui c = this.casillasGui.get(f.getPos());
+        t.getJugador().setPosicion(10);
+        f.setPos(t.getJugador().getPosicion());
+
+        c.getpEti().remove(f);
+        c.getpEti().repaint();
+
+        this.casillasGui.get(f.getPos()).getpEti().add(f);
+        this.casillasGui.get(f.getPos()).getpEti().repaint();
+
+    }
+
+    public void actEdif(int num, int pos){
+        casillasGui.get(pos).getColorPanel().actualizarEdificios(num);
+    }
+
+    public void actHipoteca(boolean hipotecar, int pos){
+        casillasGui.get(pos).getColorPanel().actualizarHipoteca(hipotecar, pos);
+    }
 }

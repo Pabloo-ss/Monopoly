@@ -1,8 +1,7 @@
 package Juego;
 
-import Excepciones.Comprobacion;
-import Excepciones.ExcepcionCapitalista;
-import Excepciones.ExcepcionNumero;
+import Excepciones.*;
+import Excepciones.Error;
 
 import java.awt.*;
 
@@ -53,11 +52,16 @@ public class Calle extends Propiedad {
                 Comprobacion.saldoSuficiente(this.costeEdif, j.getDinero());
                 this.edificios++;
                 j.setDinero(j.getDinero() - this.costeEdif);
+
+                getInter().actDinero(j.getDinero());
+                getInter().mostrarInfo("La propiedad " + getNombre() + " ha sido edificada");
+                getInter().mostrarEdif(this.edificios, getPosicion());
+                getInter().mostrarMovi(Error.banca, true, costeEdif);
             } catch (ExcepcionNumero | ExcepcionCapitalista e) {
-                Consola.imprimir(e.getMessage());
+                getInter().mostrarInfo(e.getMessage());
             }
         }else
-            Consola.imprimir("No eres el propietario");
+            getInter().mostrarInfo("No eres el propietario");
     }
 
     public void cobrar(Jugador jugador, Turno turno){
@@ -67,15 +71,17 @@ public class Calle extends Propiedad {
             jugador.setDinero(jugador.getDinero() - precio);
             this.titular.setDinero(this.titular.getDinero() + precio);
 
-            Consola.imprimir("Lo siento pero tu money baja a " + jugador.getDinero() + " €");
+            getInter().actDinero(jugador.getDinero());
+            getInter().mostrarInfo("Lo siento pero tu money baja a " + jugador.getDinero() + " €");
+            getInter().mostrarMovi(titular.getNombre(), true, precio);
             turno.setOk(true);
         }catch (ExcepcionCapitalista e){
-            Consola.imprimir((e.getMessage()));
+            getInter().mostrarInfo(e.getMessage());
         }
     }
 
-    public void describir(){
+    public void describir(){//Creo q no lo uso
         super.describir();
-        Consola.imprimir("\tAlquiler: " + this.alquiler + "\n\tIncremento: " + this.incremento + "\n\tColor: " + this.color.toString() + "\n\tCoste edificacion: " + this.costeEdif );
+        getInter().mostrarInfo("\tAlquiler: " + this.alquiler + "\n\tIncremento: " + this.incremento + "\n\tColor: " + this.color.toString() + "\n\tCoste edificacion: " + this.costeEdif );
     }
 }

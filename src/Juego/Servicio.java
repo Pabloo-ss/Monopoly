@@ -37,7 +37,9 @@ public class Servicio extends Propiedad {
               this.titular.setDinero(this.titular.getDinero() + precio);
           }
 
-          Consola.imprimir("Lo siento pero tu money baja a " + jugador.getDinero() + " €");
+          getInter().actDinero(jugador.getDinero());
+          getInter().mostrarInfo("Lo siento pero tu money baja a " + jugador.getDinero() + " €");
+          getInter().mostrarMovi(this.titular.getNombre(), true, precio);
           turno.setOk(true);
       }catch (ExcepcionCapitalista e){
           Consola.imprimir((e.getMessage()));

@@ -3,6 +3,9 @@ package Juego;
 import Excepciones.Comprobacion;
 import Excepciones.ExcepcionNumero;
 import Excepciones.ExcepcionString;
+import Excepciones.Error;
+
+import java.util.ArrayList;
 
 
 public abstract class Propiedad extends Casilla {
@@ -12,7 +15,7 @@ public abstract class Propiedad extends Casilla {
     protected int hipoteca;
     protected boolean hipotecada;
 
-    public Propiedad(String nombre, int precio, int hipoteca, Menu menu){
+    public Propiedad(String nombre, int precio, int hipoteca){
         this.nombre = nombre;
         this.titular = null;
         this.precio = precio;
@@ -50,7 +53,7 @@ public abstract class Propiedad extends Casilla {
 
     public abstract void cobrar(Jugador jugador, Turno turno);
 
-    public void comprar(Jugador jugador){ //Tengo q hacer q lo q sale por consola se meta en actMovi (igual meidficando consola para q este enlazada con mgui)
+    public void comprar(Jugador jugador){
         boolean ok = false;
         if(this.titular == null){
             float saldo = jugador.getDinero();
@@ -59,18 +62,21 @@ public abstract class Propiedad extends Casilla {
                 jugador.setDinero(saldo - this.precio);
                 jugador.getPropiedades().put(this.getNombre(), this);
 
-                Consola.imprimir("La propiedad \"" + this.nombre + "\" ha sido adquirida por " + this.precio + "€");
+                getInter().actDinero(jugador.getDinero());
+                getInter().actPropiedades(new ArrayList<>(jugador.getPropiedades().values()));
+                getInter().mostrarInfo("La propiedad \"" + this.nombre + "\" ha sido adquirida por " + this.precio + "€");
+                getInter().mostrarMovi(Error.banca, true, precio);
             }
         }else{
-            Consola.imprimir("La propiedad ya tiene un titular: " + this.titular.getNombre());
-            Consola.imprimir("Quereis llegar a un acuerdo?[s/n]");
+            getInter().mostrarInfo("La propiedad ya tiene un titular: " + this.titular.getNombre());
+            getInter().mostrarInfo("Quereis llegar a un acuerdo?[s/n]");
             String respuesta = "";
             while(!ok) {
-                respuesta = Consola.leer();
+                respuesta = getInter().leer();
                 try{
                     ok = Comprobacion.sino(respuesta);
                 }catch(ExcepcionString e) {
-                    Consola.imprimir(e.getMessage());
+                    getInter().mostrarInfo(e.getMessage());
                 }
             }
 
@@ -78,7 +84,7 @@ public abstract class Propiedad extends Casilla {
                 if(this.hipotecada = false)
                     this.vender(jugador);
                 else
-                    Consola.imprimir("Lola Mento pero la propiedad está hipotecada... No se puede vender");
+                    getInter().mostrarInfo("Lola Mento pero la propiedad está hipotecada... No se puede vender");
             }
         }
     }
@@ -87,41 +93,46 @@ public abstract class Propiedad extends Casilla {
         boolean ok = false;
         int oferta = 0;
         String respuesta = "";
-        Consola.imprimir("Hora de las negociaciones...");
-        Consola.imprimir("Cual es tu oferta " + comprador.getNombre() + "?");
+        getInter().mostrarInfo("Hora de las negociaciones...");
+        getInter().mostrarInfo("Cual es tu oferta " + comprador.getNombre() + "?");
 
         while(!ok) {
             try {
-                oferta = Comprobacion.valorValido(Consola.leer());
+                oferta = Comprobacion.valorValido(getInter().leer());
                 Comprobacion.saldoSuficiente(oferta, comprador.getDinero());
                 ok = true;
             } catch (ExcepcionNumero e){
-                Consola.imprimir(e.getMessage());
+                getInter().mostrarInfo(e.getMessage());
             }
         }
 
         ok = false;
-        Consola.imprimir(this.titular.getNombre() + ", aceptas la oferta?[s/n]");
+        getInter().mostrarInfo(this.titular.getNombre() + ", aceptas la oferta?[s/n]");
         while(!ok) {
-            respuesta = Consola.leer();
+            respuesta = getInter().leer();
             try{
                 ok = Comprobacion.sino(respuesta);
             }catch(ExcepcionString e) {
-                Consola.imprimir(e.getMessage());
+                getInter().mostrarInfo(e.getMessage());
             }
         }
         if(respuesta.equals("n"))
-            Consola.imprimir("Bueno pues nada, continuamos");
+            getInter().mostrarInfo("Bueno pues nada, continuamos");
         else{
             if(this instanceof Calle)
                 ((Calle) this).setEdificios(0);
             this.titular.getPropiedades().remove(this.getNombre());
             this.titular.setDinero(this.titular.getDinero() + oferta);
+
+            getInter().mostrarMovi(titular.getNombre(), true, oferta);
+
             this.titular = comprador;
             comprador.getPropiedades().put(this.getNombre(), this);
             comprador.setDinero(comprador.getDinero() -  oferta);
 
-            Consola.imprimir(comprador.getNombre() + " ha adquirido \"" + this.getNombre() + "\" por el modico precio de " + oferta);
+            getInter().mostrarInfo(comprador.getNombre() + " ha adquirido \"" + this.getNombre() + "\" por el modico precio de " + oferta);
+            getInter().actDinero(comprador.getDinero());
+            getInter().actPropiedades(new ArrayList<>(comprador.getPropiedades().values()));
         }
 
     }
@@ -131,21 +142,27 @@ public abstract class Propiedad extends Casilla {
             this.hipotecada = true;
             this.titular.setDinero(this.getTitular().getDinero() + this.hipoteca);
 
-            Consola.imprimir("Propiedad hipotecada, deberás pagar su precio original para recuperarla");
+            getInter().mostrarInfo("Propiedad hipotecada, deberás pagar su precio original para recuperarla");
+            getInter().actDinero(titular.getDinero());
+            getInter().actHipoteca(getPosicion(), true);
         }else
-            Consola.imprimir("No eres el dueño de esta propiedad");
+            getInter().mostrarInfo("No eres el dueño de esta propiedad");
     }
 
     public void deshipotecar(Jugador jugador){
         if(this.titular.equals(jugador)){
             try {
                 Comprobacion.saldoSuficiente(this.precio, jugador.getDinero());
-                Consola.imprimir("Propiedad deshipotecada, ya puedes disfrutar de sus ventajas");
+                jugador.setDinero(jugador.getDinero() - precio);
+
+                getInter().mostrarInfo("Propiedad deshipotecada, ya puedes disfrutar de sus ventajas");
+                getInter().actDinero(jugador.getDinero());
+                getInter().actHipoteca(getPosicion(), false);
             } catch (ExcepcionNumero e){
-                Consola.imprimir(e.getMessage());
+                getInter().mostrarInfo(e.getMessage());
             }
         }else
-            Consola.imprimir("No eres el dueño de esta propiedad");
+            getInter().mostrarInfo("No eres el dueño de esta propiedad");
     }
 
     public void describir(){

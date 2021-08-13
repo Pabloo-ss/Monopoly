@@ -1,8 +1,7 @@
 package Juego;
 
-import Juego.Casilla;
-import Juego.Consola;
-import Juego.Jugador;
+import Excepciones.Error;
+
 
 public class Taxes extends Casilla {
     private float impuesto;
@@ -16,12 +15,13 @@ public class Taxes extends Casilla {
         float impuesto = saldo * this.impuesto;
 
         if(impuesto >= saldo){
-            Consola.imprimir("Safaste, dinero insuficiente para el cobro de impuestos");
+            getInter().mostrarInfo("Safaste, dinero insuficiente para el cobro de impuestos");
         }else{
             jugador.setDinero(saldo - impuesto);
+            getInter().actDinero(jugador.getDinero());
 
-            Consola.imprimir("Lo siento pero... efectivamente España nos roba " + impuesto + " de euros en impuestos");
-            Consola.imprimir("Saldo actual: " + jugador.getDinero());
+            getInter().mostrarInfo("Lo siento pero... efectivamente España nos roba " + impuesto + " de bitcoins en impuestos");
+            getInter().mostrarMovi(Error.banca, true, impuesto);
         }
     }
 

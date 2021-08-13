@@ -13,7 +13,8 @@ public class Salida extends Casilla {
         if(j.getPosicion() + t.getTirada() >= Error.maxCasillas){
             j.setDinero(j.getDinero() + this.premio);
 
-            Consola.imprimir("Enhorabuena! recibes " + this.premio + " por tu cara bonita");
+            getInter().mostrarInfo("Enhorabuena! recibes " + this.premio + " por tu cara bonita");
+            getInter().mostrarMovi(Error.banca, false, this.premio);
         }
     }
 

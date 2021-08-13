@@ -1,9 +1,11 @@
 package Juego;
 
+import Gui.MenuGui;
+
 import java.util.HashMap;
 
 public class Carcel extends Casilla {
-    private final int turnosMax = 3;
+    private final int turnosMax = 2;
     private boolean visita;
     private HashMap<Jugador, Integer> presos;
 
@@ -27,11 +29,19 @@ public class Carcel extends Casilla {
     public void encarcelar(Jugador j){
         this.presos.put(j, 0);
         j.setEncarcelado(true);
-        //j.setPosicion();moverlo a la carcel
+
+        getInter().mostrarInfo("Pa la carcel maquina");
     }
 
     public void liberar(Jugador j){
         this.presos.remove(j);
         j.setEncarcelado(false);
+        getInter().mostrarInfo("Quedas libre de la carcel granuja");
+    }
+
+    public void comprobacion(Jugador j, Turno t){
+        if(presos.get(j) == turnosMax || t.getTirada() == 6){
+            liberar(j);
+        }
     }
 }

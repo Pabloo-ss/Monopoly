@@ -9,11 +9,8 @@ import java.util.HashMap;
 import java.util.Random;
 
 import Excepciones.Comprobacion;
-import Gui.MenuGui;
-import Gui.Orientacion;
-import Gui.Tablero;
+import Gui.*;
 import Excepciones.Error;
-import Gui.VAviso;
 
 public class Menu {
     private ArrayList<Jugador> jugadores;
@@ -22,8 +19,7 @@ public class Menu {
     private MenuGui mGui;
     private Turno turno;
     private int turn = 0;
-    private boolean next = false;
-    private boolean empezar = false;
+    private Interfaz interfaz;
 
 
     public Menu(){
@@ -33,7 +29,6 @@ public class Menu {
         File casillas = new File("casillas.txt");
         this.crearCasillas(casillas);
         this.tablero = new Tablero(this.casillas, this);
-
 
 
     }
@@ -187,6 +182,10 @@ public class Menu {
         turno.setJugador(this.jugadores.get(0));
 
         this.mGui = tablero.getMenuGui();
+        this.interfaz = new Interfaz(mGui);
+
+        for(Casilla c: casillas.values())
+            c.setInter(interfaz);
 
         return this.jugadores;
     }
@@ -238,16 +237,28 @@ public class Menu {
                 System.out.println("No deberia llegar aqui");
             }
 
-            turno.tirar();
+            mGui.limpiarMovi();
 
-            mGui.actJugador(turno.getJugador());
-            mGui.actTirada(turno.getTirada());
+            //Comprobacion carcel
+            if(turno.getJugador().isEncarcelado()){
+                Carcel car = (Carcel)casillas.get(turno.getJugador().getPosicion());
+                turno.tirar();
+                car.comprobacion(turno.getJugador(), turno);
+            }else {
+                turno.tirar();
 
-            turno.getJugador().setPosicion((turno.getJugador().getPosicion() + turno.getTirada()) % Error.maxCasillas);
+                mGui.actJugador(turno.getJugador());
+                mGui.actTirada(turno.getTirada());
 
-            tablero.moverFicha(turno);
+                turno.getJugador().setPosicion((turno.getJugador().getPosicion() + turno.getTirada()) % Error.maxCasillas);
 
-            mGui.actInfo(casillas.get(turno.getJugador().getPosicion()));
+                tablero.moverFicha(turno);
+
+                mGui.actInfo(casillas.get(turno.getJugador().getPosicion()));
+
+
+                comprobacionesTurno();
+            }
         }else{
             new VAviso(Error.moroso);
             //Intentamos cobrar de nuevo
@@ -264,7 +275,36 @@ public class Menu {
 
     }
 
+    public void comprobacionesTurno(){
+        Casilla c = casillas.get(turno.getJugador().getPosicion());
+
+        Salida s = (Salida)casillas.get(0);
+        s.recompensar(turno.getJugador(), turno);
+
+        if(c instanceof Propiedad)
+            ((Propiedad) c).cobrar(turno.getJugador(), turno);
+        else if(c instanceof Taxes)
+            ((Taxes) c).cobrar(turno.getJugador());
+        else if(c instanceof Sorpresa)
+            //Falta crear las sorpresas
+            ;
+        else if( c instanceof Carcel){
+            if(!((Carcel) c).isVisita()){
+                ((Carcel) c).encarcelar(turno.getJugador());
+                tablero.moverFichaCarcel(turno);
+                turno.getJugador().setEncarcelado(true);
+            }
+        }
+
+    }
+
+
+
     public Turno getTurno() {
         return turno;
+    }
+
+    public Tablero getTablero() {
+        return tablero;
     }
 }

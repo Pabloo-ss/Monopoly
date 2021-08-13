@@ -34,23 +34,30 @@ public class Estacion extends Propiedad {
     }
 
     public void cobrar (Jugador jugador, Turno turno){
+        float dinero = 0;
         try {
             Comprobacion.cobrable(this, jugador, turno);
             if(Comprobacion.propIguales(this) == 1) {
+                dinero = alquiler1;
                 jugador.setDinero(jugador.getDinero() - this.alquiler1);
                 this.titular.setDinero(this.titular.getDinero() + this.alquiler1);
             }if(Comprobacion.propIguales(this) == 2) {
+                dinero = alquiler2;
                 jugador.setDinero(jugador.getDinero() - this.alquiler2);
                 this.titular.setDinero(this.titular.getDinero() + this.alquiler2);
             }if(Comprobacion.propIguales(this) == 3) {
+                dinero = alquiler3;
                 jugador.setDinero(jugador.getDinero() - this.alquiler3);
                 this.titular.setDinero(this.titular.getDinero() + this.alquiler3);
             }if(Comprobacion.propIguales(this) == 4) {
+                dinero = alquiler4;
                 jugador.setDinero(jugador.getDinero() - this.alquiler4);
                 this.titular.setDinero(this.titular.getDinero() + this.alquiler4);
             }
 
-            Consola.imprimir("Lo siento pero tu money baja a " + jugador.getDinero() + " €");
+            getInter().actDinero(jugador.getDinero());
+            getInter().mostrarInfo("Lo siento pero tu money baja a " + jugador.getDinero() + " €");
+            getInter().mostrarMovi(this.titular.getNombre(), true, dinero);
             turno.setOk(true);
         }catch (ExcepcionCapitalista e){
             Consola.imprimir((e.getMessage()));

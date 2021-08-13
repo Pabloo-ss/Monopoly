@@ -12,10 +12,11 @@ public class Error {
     public final static String noComprable = "Sorry maquina pero no se puede comprar";
     public final static String noHipotecable = "Sorry maquina pero no se puede \nhipoetecar si no es una propiedad";
 
+    public final static String banca = "La Mafia";
+
     public static final int maxCasillas = 40;
     public static final int maxFila = 10;
 
     public static String in;
     public static boolean inout = false;
-    public static boolean empezar = false;
 }

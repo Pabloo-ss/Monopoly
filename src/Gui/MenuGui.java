@@ -3,6 +3,8 @@ package Gui;
 import Excepciones.Error;
 import Juego.*;
 import Excepciones.*;
+import Juego.Menu;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -24,6 +26,7 @@ public class MenuGui extends JPanel {
     private JButton bEdificar;
     private JButton bTurno;
     private JButton bHipotecar;
+    private boolean input;
 
     public MenuGui(Juego.Menu menu){
         this.setBounds(this.sizeCasilla * 2, this.sizeCasilla * 2, this.sizeCasilla * 9, this.sizeCasilla * 9);
@@ -41,9 +44,10 @@ public class MenuGui extends JPanel {
         this.propiedades.setModel(new Gui.TablaProp());
         this.dinero = new JTextField();
         this.dinero.setEditable(false);
-        this.dinero.setPreferredSize(new Dimension(55, 25));
+        this.dinero.setPreferredSize(new Dimension(65, 25));
         this.movimientos = new JTextArea();
         this.movimientos.setEditable(false);
+        this.movimientos.setPreferredSize(new Dimension(100, 300));
         this.tirada = new JTextField();
         this.tirada.setEditable(false);
         this.tirada.setPreferredSize(new Dimension(30, 25));
@@ -84,6 +88,7 @@ public class MenuGui extends JPanel {
             }
         });
 
+
         this.info.setLineWrap(true);
         this.movimientos.setLineWrap(true);
 
@@ -109,6 +114,10 @@ public class MenuGui extends JPanel {
 
     }
 
+    public Menu getMenu() {
+        return menu;
+    }
+
     public void actJugador(Jugador j){
         this.jugador.setText(j.getNombre());
         this.actDinero(j.getDinero());
@@ -119,12 +128,21 @@ public class MenuGui extends JPanel {
 
     }
 
+    public void actPropiedades(ArrayList<Propiedad> prop){
+        TablaProp t = (TablaProp) this.propiedades.getModel();
+        t.setFilas(prop);
+    }
+
     public void actDinero(float dinero){
         this.dinero.setText(Float.toString(dinero));
     }
 
     public void actTirada(int num){
         this.tirada.setText(Integer.toString(num));
+    }
+
+    public void actInfo(String info){
+        this.info.append("\n\n\n\n\n---> " + info);
     }
 
     public void actInfo(Casilla c){
@@ -200,7 +218,7 @@ public class MenuGui extends JPanel {
         this.info.setText(res);
     }
 
-    public void actMovi(boolean pagar, String segunda, float cant){
+    public void actMovi(boolean pagar, String segunda, float cant){ //No aparece no se pq
         String res = "";
 
         if(pagar)
@@ -208,6 +226,10 @@ public class MenuGui extends JPanel {
         else
             res = this.jugador.getText() + " recibe " + cant + " bitcoins de " + segunda;;
 
-        this.info.setText(res);
+        this.movimientos.setText(res);
+    }
+
+    public void limpiarMovi(){
+        movimientos.setText("");
     }
 }

@@ -31,7 +31,7 @@ public class Comprobacion {
     }
 
     public static void cobrable(Propiedad prop, Jugador j, Turno turno) throws ExcepcionCapitalista {
-        if (!prop.getTitular().equals(j)) {
+        if (!prop.getTitular().equals(j) && prop.getTitular() != null) {
             if (prop.isHipotecada())
                 throw new ExcepcionCapitalista("Lo siento " + j.getNombre() + " pero esta no la cobras que esta hipotecada ");
             else {//Se cobra
